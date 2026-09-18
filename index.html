@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>恰巴塔 · 一个面包的个人主页</title>
+<style>
+  :root{
+    --bg:#f7f5f2;
+    --surface:#ffffff;
+    --text:#1c1917;
+    --muted:#7a736d;
+    --border:#eae4dd;
+    --accent:#c2410c;
+    --accent-soft:#fdf1e9;
+    --shadow:0 1px 2px rgba(28,25,23,.04), 0 10px 30px rgba(28,25,23,.06);
+  }
+  html[data-theme="dark"]{
+    --bg:#141210;
+    --surface:#1e1b19;
+    --text:#f5f1ec;
+    --muted:#a8a29e;
+    --border:#332d29;
+    --accent:#fb923c;
+    --accent-soft:#2b1f16;
+    --shadow:0 1px 2px rgba(0,0,0,.3), 0 10px 30px rgba(0,0,0,.28);
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--text);
+    font-family:"PingFang SC","Microsoft YaHei","Noto Sans SC",system-ui,-apple-system,"Segoe UI",sans-serif;
+    font-size:15px;
+    line-height:1.75;
+    -webkit-font-smoothing:antialiased;
+    transition:background .25s ease, color .25s ease;
+  }
+  a{color:inherit;text-decoration:none;}
+  h1,h2,h3,p,ul{margin:0;}
+  ul{padding:0;list-style:none;}
+
+  /* ---------- 顶栏 ---------- */
+  header{
+    position:sticky; top:0; z-index:20;
+    backdrop-filter:blur(12px);
+    background:var(--bg); /* 旧浏览器回退 */
+    background:color-mix(in srgb, var(--bg) 80%, transparent);
+    border-bottom:1px solid var(--border);
+  }
+  .bar{
+    max-width:1080px; margin:0 auto; padding:12px 24px;
+    display:flex; align-items:center; gap:20px;
+  }
+  .brand{font-weight:600; letter-spacing:.3px;}
+  .brand span{color:var(--accent);}
+  nav{margin-left:auto; display:flex; gap:4px; flex-wrap:wrap;}
+  nav a{
+    padding:5px 11px; border-radius:999px; font-size:13.5px; color:var(--muted);
+    transition:background .18s, color .18s;
+  }
+  nav a:hover{color:var(--text); background:var(--accent-soft);}
+  nav a.active{color:var(--accent); background:var(--accent-soft); font-weight:500;}
+  .theme-btn{
+    width:34px; height:34px; flex:none; cursor:pointer;
+    display:grid; place-items:center;
+    border:1px solid var(--border); border-radius:50%;
+    background:var(--surface); color:var(--muted); font-size:15px;
+    transition:transform .2s, color .2s, border-color .2s;
+  }
+  .theme-btn:hover{transform:rotate(-18deg); color:var(--accent); border-color:var(--accent);}
+
+  /* ---------- 布局 ---------- */
+  .wrap{
+    max-width:1080px; margin:0 auto; padding:40px 24px 80px;
+    display:grid; grid-template-columns:290px 1fr; gap:36px; align-items:start;
+  }
+
+  /* ---------- 左栏资料卡 ---------- */
+  .profile{
+    position:sticky; top:88px;
+    background:var(--surface); border:1px solid var(--border); border-radius:18px;
+    padding:30px 24px; box-shadow:var(--shadow); text-align:center;
+  }
+  .avatar{
+    width:104px; height:104px; margin:0 auto 18px; border-radius:50%;
+    background:linear-gradient(140deg,#f6b26b,#c2410c 70%);
+    display:grid; place-items:center;
+    color:#fff; font-size:42px; font-weight:600; letter-spacing:2px;
+    box-shadow:0 8px 22px rgba(194,65,12,.28);
+    user-select:none;
+  }
+  html[data-theme="dark"] .avatar{background:linear-gradient(140deg,#fb923c,#9a3412 70%);}
+  .profile h1{font-size:23px; letter-spacing:1px;}
+  .profile .en{font-size:12.5px; color:var(--muted); letter-spacing:1.6px; text-transform:uppercase; margin-top:2px;}
+  .role{
+    display:inline-block; margin-top:14px; padding:4px 13px; border-radius:999px;
+    background:var(--accent-soft); color:var(--accent);
+    font-size:12.5px; font-weight:500;
+  }
+  .profile .school{font-size:13.5px; color:var(--muted); margin-top:12px;}
+  .links{
+    margin-top:22px; padding-top:20px; border-top:1px solid var(--border);
+    display:flex; flex-direction:column; gap:9px; font-size:13.5px;
+  }
+  .links a{
+    color:var(--muted); display:flex; align-items:center; gap:9px; justify-content:center;
+    transition:color .18s; word-break:break-all;
+  }
+  .links a:hover{color:var(--accent);}
+  .links svg{width:15px; height:15px; flex:none; opacity:.85;}
+
+  /* ---------- 右栏内容 ---------- */
+  .content{display:flex; flex-direction:column; gap:34px; min-width:0;}
+  section{scroll-margin-top:84px;}
+  .sec-title{
+    display:flex; align-items:center; gap:10px;
+    font-size:16.5px; font-weight:600; margin-bottom:16px;
+  }
+  .sec-title::before{
+    content:""; width:4px; height:17px; border-radius:2px;
+    background:var(--accent); flex:none;
+  }
+  .sec-title .cn{font-size:12px; font-weight:400; color:var(--muted); letter-spacing:.5px; margin-left:2px;}
+  .card{
+    background:var(--surface); border:1px solid var(--border); border-radius:16px;
+    padding:24px 26px; box-shadow:var(--shadow);
+  }
+  .card p + p{margin-top:12px;}
+  .muted{color:var(--muted);}
+
+  /* 标签 */
+  .tags{display:flex; flex-wrap:wrap; gap:9px;}
+  .tags li{
+    padding:6px 14px; border-radius:999px; font-size:13.5px;
+    background:var(--accent-soft); color:var(--accent); border:1px solid transparent;
+  }
+  .tags li.plain{background:transparent; border-color:var(--border); color:var(--muted);}
+
+  /* 动态列表 */
+  .news li{
+    display:grid; grid-template-columns:84px 1fr; gap:14px;
+    padding:9px 0; font-size:14.5px;
+  }
+  .news li + li{border-top:1px dashed var(--border);}
+  .news time{color:var(--accent); font-variant-numeric:tabular-nums; font-size:13px; padding-top:2px;}
+
+  /* 时间线 */
+  .timeline li{
+    position:relative; padding:0 0 22px 24px;
+    border-left:1.5px solid var(--border);
+  }
+  .timeline li:last-child{padding-bottom:0; border-left-color:transparent;}
+  .timeline li::before{
+    content:""; position:absolute; left:-5.5px; top:9px;
+    width:9px; height:9px; border-radius:50%;
+    background:var(--accent); box-shadow:0 0 0 3.5px var(--accent-soft);
+  }
+  .timeline .head{display:flex; align-items:baseline; gap:12px; flex-wrap:wrap;}
+  .timeline .what{font-weight:600; font-size:15px;}
+  .timeline .when{font-size:12.5px; color:var(--muted); font-variant-numeric:tabular-nums;}
+  .timeline .where{font-size:13.5px; color:var(--muted); margin-top:1px;}
+  .timeline .desc{font-size:14px; margin-top:7px; color:var(--muted);}
+
+  /* 小格 */
+  .awards{display:grid; grid-template-columns:repeat(auto-fit,minmax(210px,1fr)); gap:14px;}
+  .awards li{
+    border:1px solid var(--border); border-radius:12px; padding:13px 16px; font-size:14px;
+    background:var(--bg);
+  }
+  .awards span{display:block; font-size:12.5px; color:var(--muted); margin-top:2px;}
+
+  footer{
+    max-width:1080px; margin:0 auto; padding:0 24px 46px;
+    font-size:12.5px; color:var(--muted); text-align:center;
+  }
+  footer .dot{margin:0 7px; opacity:.5;}
+
+  /* 入场动画 */
+  .reveal{opacity:0; transform:translateY(14px); transition:opacity .55s ease, transform .55s ease;}
+  .reveal.in{opacity:1; transform:none;}
+
+  @media (max-width:820px){
+    .wrap{grid-template-columns:1fr; gap:26px; padding-top:26px;}
+    .profile{position:static;}
+    nav a{padding:5px 8px; font-size:12.5px;}
+    nav a.hide-sm{display:none;}
+    .bar{padding:11px 18px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="bar">
+    <div class="brand">恰巴塔<span>.</span></div>
+    <nav id="nav">
+      <a href="#about">关于</a>
+      <a href="#recipe" class="hide-sm">配方</a>
+      <a href="#news">动态</a>
+      <a href="#history" class="hide-sm">履历</a>
+      <a href="#works">作品</a>
+      <a href="#awards" class="hide-sm">荣誉</a>
+      <a href="#contact">联系</a>
+    </nav>
+    <button class="theme-btn" id="themeBtn" title="切换深色 / 浅色模式">◐</button>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <!-- 左栏 -->
+  <aside class="profile">
+    <div class="avatar">恰</div>
+    <h1>恰巴塔</h1>
+    <div class="en">Ciabatta</div>
+    <div class="role">含水量 75% · 主食面包</div>
+    <div class="school">产自 · 某台家用烤箱</div>
+
+    <div class="links">
+      <a href="mailto:ciabatta@example.edu.cn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m3 6 9 7 9-7"/></svg>
+        ciabatta@example.edu.cn
+      </a>
+      <a href="https://github.com/MRRRRS/MRS-s-home" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.9a3.4 3.4 0 0 0-.9-2.6c3-.3 6.2-1.5 6.2-6.7A5.2 5.2 0 0 0 20 4.8a4.9 4.9 0 0 0-.1-3.6s-1.1-.3-3.7 1.4a12.6 12.6 0 0 0-6.6 0C7 1 5.9 1.3 5.9 1.3a4.9 4.9 0 0 0-.1 3.6 5.2 5.2 0 0 0-1.4 3.6c0 5.2 3.2 6.4 6.2 6.7a3.4 3.4 0 0 0-.9 2.6V22"/></svg>
+        github.com/MRRRRS
+      </a>
+      <a href="#contact">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+        冰箱 · 第二层
+      </a>
+    </div>
+  </aside>
+
+  <!-- 右栏 -->
+  <div class="content">
+
+    <section id="about" class="reveal">
+      <div class="sec-title">关于这个面包 <span class="cn">About</span></div>
+      <div class="card">
+        <p>我是一块<b>恰巴塔</b>。高含水量、外壳脆、内部气孔很大，属于那种看起来平平无奇、一旦切开就很有说法的主食面包。</p>
+        <p class="muted">形状不太规则，这是刻意的，不是失手。有人说我像拖鞋，我不否认——意大利人本来就是这么叫我的。</p>
+        <p class="muted">目前学籍状态：数字经济专硕（在读）。实际日常状态：室温发酵中。</p>
+      </div>
+    </section>
+
+    <section id="recipe" class="reveal">
+      <div class="sec-title">配方参数 <span class="cn">Recipe</span></div>
+      <div class="card">
+        <div class="tags">
+          <li>高含水量面团力学</li>
+          <li>气孔结构的生成与坍缩</li>
+          <li>酸种发酵动力学</li>
+          <li>冷藏隔夜发酵</li>
+          <li>蒸汽与炉温的博弈</li>
+          <li>表皮脆度的临界点</li>
+        </div>
+        <p class="muted" style="margin-top:16px;">自我认知：面粉 100% · 水 75% · 盐 2% · 酵母 0.3% · 其余属于自由发挥。</p>
+      </div>
+    </section>
+
+    <section id="news" class="reveal">
+      <div class="sec-title">出炉动态 <span class="cn">News</span></div>
+      <div class="card">
+        <ul class="news">
+          <li><time>今天</time><span>室温 26℃、湿度 65%，完成第二次折叠。面团状态良好，开始有点自信了。</span></li>
+          <li><time>昨晚 23:40</time><span>转入冰箱低温长发酵。接下来的 14 个小时里，除了等待什么都做不了。</span></li>
+          <li><time>上次出炉</time><span>割包割歪了。不影响吃，但影响心情。</span></li>
+          <li><time>更早</time><span>酸种「老张」喂养第 200 天，状态稳定，偶尔冒泡。</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="history" class="reveal">
+      <div class="sec-title">烘焙履历 <span class="cn">History</span></div>
+      <div class="card">
+        <ul class="timeline">
+          <li>
+            <div class="head">
+              <span class="what">从「饼」到「面包」的自我认知重构</span>
+              <span class="when">2025 – 2026</span>
+            </div>
+            <div class="where">某家用烤箱 · 中层</div>
+            <div class="desc">终于理解了蒸汽的作用。外壳开始脆，气孔开始大，开始被邻居敲门。</div>
+          </li>
+          <li>
+            <div class="head">
+              <span class="what">第一次烤出实心砖头</span>
+              <span class="when">2024</span>
+            </div>
+            <div class="where">厨房 · 案发现场</div>
+            <div class="desc">与面粉和解。认识到发酵不是「放一会儿」，而是一门需要掐表的学问。</div>
+          </li>
+          <li>
+            <div class="head">
+              <span class="what">出生于一个含水量 75% 的盆里</span>
+              <span class="when">更早</span>
+            </div>
+            <div class="where">一张不太干净的料理台</div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="works" class="reveal">
+      <div class="sec-title">作品集 <span class="cn">Works</span></div>
+      <div class="card">
+        <ul class="timeline">
+          <li>
+            <div class="head">
+              <span class="what">原味恰巴塔 v1.0</span>
+              <span class="when">主力作品</span>
+            </div>
+            <div class="where">评分：气孔勉强及格</div>
+            <div class="desc">目前最稳定的一版。切开后气孔分布尚可，配上橄榄油和黑胡椒就能过一整天。</div>
+          </li>
+          <li>
+            <div class="head">
+              <span class="what">全麦版</span>
+              <span class="when">实验性作品</span>
+            </div>
+            <div class="where">评分：组织偏密，有待改进</div>
+            <div class="desc">健康是健康了，但口感诚实。可能在向砖头的方向发展，需要刹车。</div>
+          </li>
+          <li>
+            <div class="head">
+              <span class="what">橄榄迷迭香</span>
+              <span class="when">意外之作</span>
+            </div>
+            <div class="where">评分：意外好吃</div>
+            <div class="desc">本来只是想清理一下冰箱里的橄榄，结果成了目前最受欢迎的一款。</div>
+          </li>
+          <li>
+            <div class="head">
+              <span class="what">《被遗忘在烤箱里的一生》</span>
+              <span class="when">失败品</span>
+            </div>
+            <div class="where">评分：不予显示</div>
+            <div class="desc">碳化程度很高，颜色很深，具有收藏价值。</div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="awards" class="reveal">
+      <div class="sec-title">荣誉与技能 <span class="cn">Awards &amp; Skills</span></div>
+      <div class="card">
+        <ul class="awards">
+          <li>年度最受欢迎早餐<span>提名，未获奖</span></li>
+          <li>气孔最大奖<span>自评，全票通过</span></li>
+          <li>被邻居闻着香味敲门<span>发生了两次</span></li>
+          <li>冰箱第二层常驻席位<span>长期有效</span></li>
+        </ul>
+        <div class="tags" style="margin-top:18px;">
+          <li class="plain">揉面</li>
+          <li class="plain">折叠</li>
+          <li class="plain">割包</li>
+          <li class="plain">观察发酵</li>
+          <li class="plain">等待</li>
+          <li class="plain">忍住不吃</li>
+          <li class="plain">清理料理台</li>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" class="reveal">
+      <div class="sec-title">联系我 <span class="cn">Contact</span></div>
+      <div class="card">
+        <p>欢迎交流面包相关的一切，或者单纯告诉我你早上吃了什么。</p>
+        <p class="muted">邮箱：<a href="mailto:ciabatta@example.edu.cn" style="color:var(--accent);">ciabatta@example.edu.cn</a></p>
+        <p class="muted">GitHub：<a href="https://github.com/MRRRRS/MRS-s-home" target="_blank" rel="noopener" style="color:var(--accent);">github.com/MRRRRS/MRS-s-home</a></p>
+        <p class="muted">平时出没：冰箱第二层 · 烤箱中层 · 你的早餐桌</p>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<footer>
+  © 2026 恰巴塔 <span class="dot">·</span> 一个含水量 75% 的个人主页 <span class="dot">·</span> 人工智能课程作业
+</footer>
+
+<script>
+  // 深浅色主题
+  const root = document.documentElement;
+  const btn = document.getElementById('themeBtn');
+  const saved = localStorage.getItem('theme');
+  const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+  root.dataset.theme = saved || (prefersDark ? 'dark' : 'light');
+  btn.addEventListener('click', () => {
+    const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    root.dataset.theme = next;
+    localStorage.setItem('theme', next);
+  });
+
+  // 滚动入场
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+  // 导航高亮当前板块
+  const links = [...document.querySelectorAll('#nav a')];
+  const sections = links.map(a => document.querySelector(a.getAttribute('href'))).filter(Boolean);
+  const spy = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + e.target.id));
+    });
+  }, { rootMargin: '-80px 0px -70% 0px' });
+  sections.forEach(s => spy.observe(s));
+</script>
+
+</body>
+</html>
